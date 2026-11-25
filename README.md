@@ -1,2 +1,4 @@
 # Sistema-de-Gest-o-de-Biblioteca
-Projeto para à Unidade Curricular de Estruturas de Dados
+Universidade de Luanda
+Engenharia Informática
+Projeto para à Unidade Curricular de Estruturas de Dados, usando Java
