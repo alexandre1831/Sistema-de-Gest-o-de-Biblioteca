@@ -1,14 +1,15 @@
 
+
 package estruturas;
 
-public class MinhaLista<T> {
+public class MinhaListaDupla<T> {
 
-    private No<T> primeiro;
-    private No<T> ultimo;
+    private NoDuplo<T> primeiro;
+    private NoDuplo<T> ultimo;
     private int tamanho;
 
     // Construtor
-    public MinhaLista() {
+    public MinhaListaDupla() {
         primeiro = null;
         ultimo = null;
         tamanho = 0;
@@ -17,13 +18,14 @@ public class MinhaLista<T> {
     // 1. Adicionar no início
     public void adicionarInicio(T dado) {
 
-        No<T> novo = new No<>(dado);
+        NoDuplo<T> novo = new NoDuplo<>(dado);
 
         if (estaVazia()) {
             primeiro = novo;
             ultimo = novo;
         } else {
             novo.setProximo(primeiro);
+            primeiro.setAnterior(novo);
             primeiro = novo;
         }
 
@@ -33,12 +35,13 @@ public class MinhaLista<T> {
     // 2. Adicionar no fim
     public void adicionarFim(T dado) {
 
-        No<T> novo = new No<>(dado);
+        NoDuplo<T> novo = new NoDuplo<>(dado);
 
         if (estaVazia()) {
             primeiro = novo;
             ultimo = novo;
         } else {
+            novo.setAnterior(ultimo);
             ultimo.setProximo(novo);
             ultimo = novo;
         }
@@ -65,15 +68,16 @@ public class MinhaLista<T> {
             return;
         }
 
-        No<T> novo = new No<>(dado);
-        No<T> atual = primeiro;
+        NoDuplo<T> atual = obterNo(posicao);
+        NoDuplo<T> anterior = atual.getAnterior();
 
-        for (int i = 0; i < posicao - 1; i++) {
-            atual = atual.getProximo();
-        }
+        NoDuplo<T> novo = new NoDuplo<>(dado);
 
-        novo.setProximo(atual.getProximo());
-        atual.setProximo(novo);
+        novo.setAnterior(anterior);
+        novo.setProximo(atual);
+
+        anterior.setProximo(novo);
+        atual.setAnterior(novo);
 
         tamanho++;
     }
@@ -81,21 +85,13 @@ public class MinhaLista<T> {
     // 4. Consultar elemento numa posição
     public T consultar(int posicao) {
 
-        validarPosicao(posicao);
-
-        No<T> atual = primeiro;
-
-        for (int i = 0; i < posicao; i++) {
-            atual = atual.getProximo();
-        }
-
-        return atual.getDado();
+        return obterNo(posicao).getDado();
     }
 
     // 5. Pesquisar elemento
     public int pesquisar(T dado) {
 
-        No<T> atual = primeiro;
+        NoDuplo<T> atual = primeiro;
         int posicao = 0;
 
         while (atual != null) {
@@ -115,39 +111,28 @@ public class MinhaLista<T> {
     // 6. Extrair elemento de uma posição
     public T extrair(int posicao) {
 
-        validarPosicao(posicao);
+        NoDuplo<T> removido = obterNo(posicao);
 
-        No<T> removido;
+        NoDuplo<T> anterior = removido.getAnterior();
+        NoDuplo<T> proximo = removido.getProximo();
 
-        if (posicao == 0) {
-
-            removido = primeiro;
-            primeiro = primeiro.getProximo();
-
-            tamanho--;
-
-            if (tamanho == 0) {
-                ultimo = null;
-            }
-
-            return removido.getDado();
+        if (anterior == null) {
+            primeiro = proximo;
+        } else {
+            anterior.setProximo(proximo);
         }
 
-        No<T> anterior = primeiro;
-
-        for (int i = 0; i < posicao - 1; i++) {
-            anterior = anterior.getProximo();
-        }
-
-        removido = anterior.getProximo();
-
-        anterior.setProximo(removido.getProximo());
-
-        if (removido == ultimo) {
+        if (proximo == null) {
             ultimo = anterior;
+        } else {
+            proximo.setAnterior(anterior);
         }
 
         tamanho--;
+
+        // Desligar o nó removido
+        removido.setAnterior(null);
+        removido.setProximo(null);
 
         return removido.getDado();
     }
@@ -167,10 +152,11 @@ public class MinhaLista<T> {
         }
 
         extrair(posicao);
+
         return true;
     }
 
-    // 9. Consultar tamanho
+    // 9. Obter tamanho
     public int getTamanho() {
         return tamanho;
     }
@@ -180,23 +166,40 @@ public class MinhaLista<T> {
         return tamanho == 0;
     }
 
-    // 11. Limpar a lista
-    public void limpar() {
-        primeiro = null;
-        ultimo = null;
-        tamanho = 0;
+    // 11. Obter primeiro elemento
+    public T obterPrimeiro() {
+
+        if (estaVazia()) {
+            throw new java.util.NoSuchElementException(
+                    "A lista está vazia."
+            );
+        }
+
+        return primeiro.getDado();
     }
 
-    // 12. Mostrar elementos
+    // 12. Obter último elemento
+    public T obterUltimo() {
+
+        if (estaVazia()) {
+            throw new java.util.NoSuchElementException(
+                    "A lista está vazia."
+            );
+        }
+
+        return ultimo.getDado();
+    }
+
+    // 13. Mostrar do início para o fim
     public void mostrar() {
 
-        No<T> atual = primeiro;
+        NoDuplo<T> atual = primeiro;
 
         System.out.print("Lista: ");
 
         while (atual != null) {
 
-            System.out.print(atual.getDado() + " -> ");
+            System.out.print(atual.getDado() + " <-> ");
 
             atual = atual.getProximo();
         }
@@ -204,7 +207,73 @@ public class MinhaLista<T> {
         System.out.println("null");
     }
 
-    // Método auxiliar de validação
+    // 14. Mostrar do fim para o início
+    public void mostrarInverso() {
+
+        NoDuplo<T> atual = ultimo;
+
+        System.out.print("Lista inversa: ");
+
+        while (atual != null) {
+
+            System.out.print(atual.getDado() + " <-> ");
+
+            atual = atual.getAnterior();
+        }
+
+        System.out.println("null");
+    }
+
+    // 15. Limpar a lista
+    public void limpar() {
+
+        NoDuplo<T> atual = primeiro;
+
+        while (atual != null) {
+
+            NoDuplo<T> proximo = atual.getProximo();
+
+            atual.setAnterior(null);
+            atual.setProximo(null);
+
+            atual = proximo;
+        }
+
+        primeiro = null;
+        ultimo = null;
+        tamanho = 0;
+    }
+
+    // Método auxiliar: obter nó numa posição
+    private NoDuplo<T> obterNo(int posicao) {
+
+        validarPosicao(posicao);
+
+        NoDuplo<T> atual;
+
+        // Percorrer a partir do início
+        if (posicao < tamanho / 2) {
+
+            atual = primeiro;
+
+            for (int i = 0; i < posicao; i++) {
+                atual = atual.getProximo();
+            }
+
+        } else {
+
+            // Percorrer a partir do fim
+            atual = ultimo;
+
+            for (int i = tamanho - 1; i > posicao; i--) {
+                atual = atual.getAnterior();
+            }
+        }
+
+        return atual;
+    }
+
+    // Validar posição
     private void validarPosicao(int posicao) {
 
         if (posicao < 0 || posicao >= tamanho) {
