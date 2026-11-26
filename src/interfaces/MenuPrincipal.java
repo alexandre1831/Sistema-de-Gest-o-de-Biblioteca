@@ -156,11 +156,11 @@ public class MenuPrincipal extends JFrame {
         painelCentral.add(telaEmprestimos, "Empréstimos");
 
         // 5. Devoluções - interface por desenvolver
+        TelaDevolucoes telaDevolucoes =
+                new TelaDevolucoes(emprestimoService);
+
         painelCentral.add(
-                criarPainelEmDesenvolvimento(
-                        "Gestão de Devoluções",
-                        "Aqui será possível consultar empréstimos activos e registar devoluções."
-                ),
+                telaDevolucoes,
                 "Devoluções"
         );
 
