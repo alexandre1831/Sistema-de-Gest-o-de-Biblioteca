@@ -17,20 +17,20 @@ public class EmprestimoService {
     private int proximoCodigo;
 
     // Construtor
-    public EmprestimoService(
-            MinhaLista<Livro> livros,
-            MinhaLista<Leitor> leitores) {
 
-        if (livros == null || leitores == null) {
+    public EmprestimoService(MinhaLista<Livro> livros,
+                             MinhaLista<Leitor> leitores,
+                             MinhaLista<Emprestimo> emprestimos) {
+
+        if (livros == null || leitores == null || emprestimos == null) {
             throw new IllegalArgumentException(
-                    "As listas de livros e leitores são obrigatórias."
+                    "As listas não podem ser nulas."
             );
         }
 
-        this.emprestimos = new MinhaLista<>();
         this.livros = livros;
         this.leitores = leitores;
-
+        this.emprestimos = emprestimos;
         this.proximoCodigo = 1;
     }
 
