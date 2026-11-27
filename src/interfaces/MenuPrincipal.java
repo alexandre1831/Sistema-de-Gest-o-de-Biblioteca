@@ -165,20 +165,24 @@ public class MenuPrincipal extends JFrame {
         );
 
         // 6. Histórico - interface por desenvolver
+        TelaHistoricos telaHistoricos =
+                new TelaHistoricos(emprestimoService);
+
         painelCentral.add(
-                criarPainelEmDesenvolvimento(
-                        "Histórico de Empréstimos",
-                        "Aqui serão apresentados os empréstimos anteriores e os livros devolvidos."
-                ),
+                telaHistoricos,
                 "Histórico"
         );
 
         // 7. Relatórios - interface por desenvolver
+        TelaRelatorios telaRelatorios =
+                new TelaRelatorios(
+                        livroService,
+                        leitorService,
+                        emprestimoService
+                );
+
         painelCentral.add(
-                criarPainelEmDesenvolvimento(
-                        "Relatórios",
-                        "Aqui serão apresentados os relatórios estatísticos da biblioteca."
-                ),
+                telaRelatorios,
                 "Relatórios"
         );
 
